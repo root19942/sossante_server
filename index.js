@@ -35,6 +35,6 @@ var port = 8080;
 //    console.log('listening in http://localhost:' + port);
 // });
 
-http.listen( port, "https://sossante-server.herokuapp.com/", 34, function(){
+http.listen( port, function(){
   console.log( "Server listening on port:%s", port );
 });
