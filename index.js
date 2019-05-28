@@ -29,7 +29,7 @@ io.on('connection', (socket) => {
 });
 
 //var port = process.env.PORT || 3001;
-var port = 8080;
+var port = process.env.PORT || 5000
 
 // http.listen(port,"sossante", function(){
 //    console.log('listening in http://localhost:' + port);
