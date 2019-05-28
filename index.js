@@ -35,6 +35,4 @@ var port = 1337;
 //    console.log('listening in http://localhost:' + port);
 // });
 
-http.listen( port, "172.20.10.5", 34, function(){
-  console.log( "Server listening on port:%s", port );
-});
+http.listen();
