@@ -29,10 +29,12 @@ io.on('connection', (socket) => {
 });
 
 //var port = process.env.PORT || 3001;
-var port = 1337;
+var port = 8080;
 
 // http.listen(port,"sossante", function(){
 //    console.log('listening in http://localhost:' + port);
 // });
 
-http.listen();
+http.listen( port, "https://sossante-server.herokuapp.com/", 34, function(){
+  console.log( "Server listening on port:%s", port );
+});
