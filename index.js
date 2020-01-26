@@ -1,8 +1,10 @@
 var app = require('express')();
 var server = require('http').Server(app);
 var io = require('socket.io')(server);
-
-server.listen(80);
+var PORT = process.env.PORT || 4000;
+server.listen(PORT, function () {
+    console.log('Node app is working on :'+PORT);
+});
 // WARNING: app.listen(80) will NOT work here!
 
 io.on('connection', function (socket) {
