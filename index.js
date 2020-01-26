@@ -1,40 +1,54 @@
-let app = require('express')();
-
-let http = require('http').Server(app);
-let io = require('socket.io')(http);
-
-io.on('connection', (socket) => {
-  
-  socket.on('disconnect', function(){
-    io.emit('users-changed', {user: socket.nickname, event: 'left'});   
-  });
-
-  socket.on('set-nickname', (nickname) => {
-    socket.nickname = nickname;
-    io.emit('users-changed', {user: nickname, event: 'joined'});    
-  });
+var http = require('http'); 
 
 
-
-  socket.on('validate-sos', () => {
-    console.log("valider")
-    io.emit('consultation', {code: "693855215"});    
-  });
-  
-  socket.on('add-message', (message) => {
-    io.emit('message', {text: message.text, from: socket.nickname, created: new Date()});    
-  });
-
-
+httpserver = http.createServer(function (req, res) {
+  console.log('Un utilisateur a afficher la page ')
+  res.write('Hello World!'); //write a response to the client
+  res.end(); //end the response
 });
+httpserver.listen(8080); //the server object listens on port 8080
 
-//var port = process.env.PORT || 3001;
-var port = process.env.PORT || 5000
+var io = require('socket.io')(http).listen(httpserver);
 
-// http.listen(port,"sossante", function(){
-//    console.log('listening in http://localhost:' + port);
-// });
 
-http.listen( port, function(){
-  console.log( "Server listening on port:%s", port );
-});
+
+var users = {};
+
+io.sockets.on('connection', (socket) => {
+  var me = false
+
+  io.sockets.emit('newuser',users)
+
+  // socket.on('login', (user) => {
+  //   user.socket = socket.id; 
+  //   users[socket.id] = user; 
+  //   io.sockets.emit('newuser',users)
+
+  //   console.log('nouvelle connection')
+  // });
+
+
+  socket.on('StartToWaitPaiementFor', (user) => {
+    user.socket = socket.id; 
+    users[socket.id] = user; 
+    io.sockets.emit('newuser',users)
+  });
+
+  socket.on('confirme', (transaction) => {
+    
+    io.to(socket_ID).emit('valider',({code:transaction.socket_ID,amound:transaction.amound}));
+  });
+
+
+  socket.on('paiement', (transaction) => {
+    console.log(transaction)   
+  });
+  socket.on('disconnect', (transaction) => {
+    if(!me){
+      delete users[socket.id]
+      console.log('deconnection')   
+    }
+    
+  });
+
+})
