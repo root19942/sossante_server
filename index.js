@@ -9,9 +9,6 @@ httpserver = http.createServer(function (req, res) {
 httpserver.listen(8080); //the server object listens on port 8080
 
 var io = require('socket.io')(http).listen(httpserver);
-
-
-
 var users = {};
 
 io.sockets.on('connection', (socket) => {
@@ -19,36 +16,41 @@ io.sockets.on('connection', (socket) => {
 
   io.sockets.emit('newuser',users)
 
-  // socket.on('login', (user) => {
-  //   user.socket = socket.id; 
-  //   users[socket.id] = user; 
-  //   io.sockets.emit('newuser',users)
-
-  //   console.log('nouvelle connection')
-  // });
-
-
-  socket.on('StartToWaitPaiementFor', (user) => {
+  socket.on('onLogin', (user) => {
     user.socket = socket.id; 
     users[socket.id] = user; 
     io.sockets.emit('newuser',users)
   });
 
-  socket.on('confirme', (transaction) => {
-    
-    io.to(socket_ID).emit('valider',({code:transaction.socket_ID,amound:transaction.amound}));
-  });
 
-
-  socket.on('paiement', (transaction) => {
-    console.log(transaction)   
-  });
-  socket.on('disconnect', (transaction) => {
-    if(!me){
-      delete users[socket.id]
-      console.log('deconnection')   
+  socket.on('onWhriting', (user_to) => {
+    for (var i = users.length - 1; i >= 0; i--) {
+      if(users[i].user.id == user_to.id){
+        user.socket = socket.id; 
+        users[socket.id] = user; 
+        io.to(user[i].socket).emit('ImOnWhriting');
+        break
+      }
     }
-    
+
   });
+
+  socket.on('onSendMessage', (user_to,message) => {
+    for (var i = users.length - 1; i >= 0; i--) {
+      if(users[i].user.id == user_to.id){
+        user.socket = socket.id; 
+        users[socket.id] = user; 
+        io.to(user[i].socket).emit('IHaveSendMessage',({body:message}));
+        break
+      }
+    }
+
+  });
+
+  socket.on('disconnect', () => {
+      delete users[socket.id]
+      io.sockets.emit('userDisconnected',users)
+  });
+
 
 })
