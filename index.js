@@ -5,7 +5,9 @@ var PORT = process.env.PORT || 4000;
 server.listen(PORT, function () {
     console.log('Node app is working on :'+PORT);
 });
-// WARNING: app.listen(80) will NOT work here!
+app.get('/', function (req, res) {
+  res.send('Le port est le =>'+PORT)
+})
 
 io.on('connection', function (socket) {
     socket.on('onLogin', (user) => {
